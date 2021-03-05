@@ -28,7 +28,7 @@ const NewTodoForm = ({createTodo}) => {
       const uid = uuid();
       values.id = uid;
       createTodo(values);
-      alert(JSON.stringify(values, null, 2));
+      
       formik.handleReset();
     }
   })
