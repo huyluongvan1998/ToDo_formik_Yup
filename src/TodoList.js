@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NewTodoForm from "./NewTodoForm";
 import Todo from "./Todo";
 import "./TodoList.css";
@@ -24,7 +24,6 @@ const TodoList = () =>{
   const [filteredData, setFilteredData] = useState([]);
   const [selectValue, setSelectValue] = useState();
   // eslint-disable-next-line
-  const [selectData, setSelectData] = useState();
  
   const options = [
     {id: 1, status: 'default'},
@@ -37,7 +36,8 @@ const TodoList = () =>{
     setTodos(
     [...todos, newTodo]
     );
-    
+
+
   }
   
   const remove = (id)  => {
@@ -58,9 +58,7 @@ const TodoList = () =>{
   const toggleCompletion = (id)  => {
     const updatedTodos = todos.map(todo => {
       if (todo.id === id) {
-        console.log('check todo', todo)
         return {...todo, completed: !todo.completed, isFinished: !todo.isFinished}
-        
       }
       return todo;
     });
@@ -100,8 +98,22 @@ const TodoList = () =>{
 
   //Select Search
 
+  //**********************************LOCAL STORAGE**********************************
 
 
+
+
+
+
+  //**********************************LOCAL STORAGE**********************************
+  
+  useEffect(()=> {
+    if(localStorage){
+      console.log(localStorage.todos);
+    }
+  },[])
+  
+  
   //SHOW TODOS LIST
   
   const showTodos = !(filteredData.length > 0) ? 
@@ -118,6 +130,7 @@ const TodoList = () =>{
             removeTodo={remove}
             updateTodo={update}
             toggleTodo={toggleCompletion}
+            todos={todos}
           />
         </CSSTransition>
       );
@@ -136,6 +149,7 @@ const TodoList = () =>{
             removeTodo={remove}
             updateTodo={update}
             toggleTodo={toggleCompletion}
+            todos={todos}
           />
         </CSSTransition>
       );

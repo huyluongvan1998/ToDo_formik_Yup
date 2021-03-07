@@ -26,15 +26,19 @@ const NewTodoForm = ({createTodo, todos}) => {
         .min(2, "Mininum 2 characters")
         .max(15, "Maximum 15 characters")
         .test('duplicate', 'Task Have Already Existed', function(value){
-        let isDup = true;
-        todos.forEach((todo) => {
-          if(todo.value === value) 
-          return isDup = false;
-            return isDup = true;
-        })
-          console.log(isDup);
-          return isDup
-        })
+          let isDup = true;
+          let arr = [];
+          todos.forEach((todo) => {
+            if(todo.value === value) {
+              todos.map((el, index) => arr.push(todos.indexOf(value) !== index))
+            } else {
+              isDup = true;
+            }
+          })
+            arr.length > 0 ? isDup = false : isDup = true
+            arr = [];
+            return isDup
+          })
         .required("Task is Required!")
     }),
     onSubmit: values => {
@@ -42,9 +46,8 @@ const NewTodoForm = ({createTodo, todos}) => {
       values.id = uid;
       const dateTime = new Date();
       values.createDate = dateTime;
-      todos.filter((value, idx) =>console.log(todos.indexOf(values.value) !== idx))
       createTodo(values);
-      // console.log(JSON.stringify(values));
+      // console.log(JSON.stringify(values))
       formik.handleReset();
     }
   })

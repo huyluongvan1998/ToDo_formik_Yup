@@ -8,7 +8,7 @@ import  Popup from './components/popUp';
 // import TodoList from "./TodoList";
 
 
-const Todo = ({ createDate, id ,task, completed, removeTodo, toggleTodo, updateTodo, searchContent}) =>  {
+const Todo = ({ createDate, id ,task, completed, removeTodo, toggleTodo, updateTodo, todos}) =>  {
   // constructor(props) {
   //   super(props);
   //   this.state = {
@@ -30,10 +30,24 @@ const Todo = ({ createDate, id ,task, completed, removeTodo, toggleTodo, updateT
     },
     validationSchema: Yup.object({
       value: Yup.string()
+        .trim("Task is required!")
         .min(2, "Mininum 2 characters")
         .max(15, "Maximum 15 characters")
+        .test('duplicate', 'Task Have Already Existed', function(value){
+        let isDup = true;
+        let arr = [];
+        todos.forEach((todo) => {
+          if(todo.value === value) {
+            todos.map((el, index) => arr.push(todos.indexOf(value) !== index))
+          } else {
+            isDup = true;
+          }
+        })
+          arr.length > 0 ? isDup = false : isDup = true
+          arr = [];
+          return isDup
+        })
         .required("Task is Required!")
-        
     }),
     onSubmit: values => {
       setTasks(values.value);
