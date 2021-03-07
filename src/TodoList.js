@@ -36,9 +36,11 @@ const TodoList = () =>{
     setTodos(
     [...todos, newTodo]
     );
-
-
-  }
+    
+    
+      localStorage.setItem('todos', JSON.stringify({todos}));
+      console.log('test storage: ', localStorage.todos.map(todo => console.log('test: ',todo)));
+    }
   
   const remove = (id)  => {
     setTodos(todos.filter(el => el.id !== id));
@@ -69,6 +71,8 @@ const TodoList = () =>{
   // CRUD TODO___________________________________________________________
   
   
+
+
   //Filtered Data
   const onChangeSearchHandler = (e) => {
     let {value} = e.target
@@ -99,19 +103,19 @@ const TodoList = () =>{
   //Select Search
 
   //**********************************LOCAL STORAGE**********************************
+ 
 
-
+  useEffect(()=> {
+    if(localStorage){
+      console.log(localStorage.todos);
+    }
+  },[])
 
 
 
 
   //**********************************LOCAL STORAGE**********************************
   
-  useEffect(()=> {
-    if(localStorage){
-      console.log(localStorage.todos);
-    }
-  },[])
   
   
   //SHOW TODOS LIST
