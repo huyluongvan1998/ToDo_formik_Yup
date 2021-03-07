@@ -161,7 +161,7 @@ const TodoList = () =>{
               value={selectValue}
             />
           </form>
-        <NewTodoForm createTodo={create}   />
+        <NewTodoForm createTodo={create}  todos={todos} />
 
         <ul>
           <TransitionGroup className='todo-list'>{showTodos}</TransitionGroup>

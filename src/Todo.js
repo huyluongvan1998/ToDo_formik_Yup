@@ -5,6 +5,7 @@ import { useFormik } from 'formik'
 import * as Yup from "yup";
 import { format, getHours, getMinutes, getSeconds } from 'date-fns'
 import  Popup from './components/popUp';
+// import TodoList from "./TodoList";
 
 
 const Todo = ({ createDate, id ,task, completed, removeTodo, toggleTodo, updateTodo, searchContent}) =>  {
@@ -31,7 +32,8 @@ const Todo = ({ createDate, id ,task, completed, removeTodo, toggleTodo, updateT
       value: Yup.string()
         .min(2, "Mininum 2 characters")
         .max(15, "Maximum 15 characters")
-        .required("Task is Required!"),
+        .required("Task is Required!")
+        
     }),
     onSubmit: values => {
       setTasks(values.value);

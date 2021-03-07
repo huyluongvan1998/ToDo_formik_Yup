@@ -4,7 +4,7 @@ import "./NewTodoForm.css";
 import { useFormik } from 'formik'
 import * as Yup from "yup";
 
-const NewTodoForm = ({createTodo}) => {
+const NewTodoForm = ({createTodo, todos}) => {
   // constructor(props) {
   //   super(props);
   //   this.state = { task: "" };
@@ -25,21 +25,26 @@ const NewTodoForm = ({createTodo}) => {
         .trim("Task is required!")
         .min(2, "Mininum 2 characters")
         .max(15, "Maximum 15 characters")
+        .test('duplicate', 'Task Have Already Existed', function(value){
+        let isDup = true;
+        todos.forEach((todo) => {
+          if(todo.value === value) 
+          return isDup = false;
+            return isDup = true;
+        })
+          console.log(isDup);
+          return isDup
+        })
         .required("Task is Required!")
-        .test('equal', 'Task Name Existed',
-          function(v) {
-            const ref = Yup.ref('value');
-            return v === this.resolve(ref);
-          }
-        )
     }),
     onSubmit: values => {
       const uid = uuid();
       values.id = uid;
       const dateTime = new Date();
       values.createDate = dateTime;
+      todos.filter((value, idx) =>console.log(todos.indexOf(values.value) !== idx))
       createTodo(values);
-      console.log(JSON.stringify(values));
+      // console.log(JSON.stringify(values));
       formik.handleReset();
     }
   })
