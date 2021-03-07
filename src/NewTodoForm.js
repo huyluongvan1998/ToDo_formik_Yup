@@ -25,7 +25,13 @@ const NewTodoForm = ({createTodo}) => {
         .trim("Task is required!")
         .min(2, "Mininum 2 characters")
         .max(15, "Maximum 15 characters")
-        .required("Task is Required!"),
+        .required("Task is Required!")
+        .test('equal', 'Task Name Existed',
+          function(v) {
+            const ref = Yup.ref('value');
+            return v === this.resolve(ref);
+          }
+        )
     }),
     onSubmit: values => {
       const uid = uuid();

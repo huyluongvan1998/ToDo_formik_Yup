@@ -91,10 +91,10 @@ const TodoList = () =>{
     todos.filter(todo => todo.isFinished === true ) 
     : value && value === 'process' 
       ? todos.filter(todo => todo.isFinished === false ) 
-      :null
+      : todos
     
 
-    setSelectData(newSelectData);
+      setFilteredData(newSelectData);
   
   }
 
@@ -122,7 +122,7 @@ const TodoList = () =>{
         </CSSTransition>
       );
     })
-    : 
+    :
     filteredData.map(todo => {
       const {id, value, completed, createDate} = todo;
       return (
