@@ -16,10 +16,13 @@ const NewTodoForm = ({createTodo}) => {
     initialValues: {
       value: '',
       id: '',
-      completed: false
+      completed: false,
+      createDate: new Date(),
+      isFinished: false
     },
     validationSchema: Yup.object({
       value: Yup.string()
+        .trim("Task is required!")
         .min(2, "Mininum 2 characters")
         .max(15, "Maximum 15 characters")
         .required("Task is Required!"),
@@ -27,8 +30,10 @@ const NewTodoForm = ({createTodo}) => {
     onSubmit: values => {
       const uid = uuid();
       values.id = uid;
+      const dateTime = new Date();
+      values.createDate = dateTime;
       createTodo(values);
-      
+      console.log(JSON.stringify(values));
       formik.handleReset();
     }
   })
@@ -58,6 +63,7 @@ const NewTodoForm = ({createTodo}) => {
             name='value'
             value={formik.values.value}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
           <button type='submit' 
             

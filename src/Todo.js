@@ -3,8 +3,11 @@ import "./Todo.css";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { useFormik } from 'formik'
 import * as Yup from "yup";
+import { format, getHours, getMinutes, getSeconds } from 'date-fns'
+import  Popup from './components/popUp';
 
-const Todo = ({ key, id ,task, completed, removeTodo, toggleTodo, updateTodo}) =>  {
+
+const Todo = ({ createDate, id ,task, completed, removeTodo, toggleTodo, updateTodo, searchContent}) =>  {
   // constructor(props) {
   //   super(props);
   //   this.state = {
@@ -21,6 +24,8 @@ const Todo = ({ key, id ,task, completed, removeTodo, toggleTodo, updateTodo}) =
   const formik = useFormik({
     initialValues: {
       value: task,
+      updatedDate: '',
+      isUpdated: false
     },
     validationSchema: Yup.object({
       value: Yup.string()
@@ -31,8 +36,10 @@ const Todo = ({ key, id ,task, completed, removeTodo, toggleTodo, updateTodo}) =
     onSubmit: values => {
       setTasks(values.value);
       setIsEditing( false );
+      const generateUpdatedDate = new Date();
+      values.updatedDate = generateUpdatedDate;
       updateTodo(id, values.value);
-    
+      
     }
   })
 
@@ -58,17 +65,18 @@ const Todo = ({ key, id ,task, completed, removeTodo, toggleTodo, updateTodo}) =
   // handleToggle(evt) {
   //   this.props.toggleTodo(this.props.id);
   // }
-  
-    let result;
+  const {value} = formik.values;
+  let result;
     if (isEditing) {
       result = (
         <CSSTransition key='editing' timeout={500} classNames='form'>
           <form className='Todo-edit-form' onSubmit={formik.handleSubmit}>
             <input
               type='text'
-              value={formik.values.value}
+              value={value}
               name='value'
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
             <button>Save</button>
             {formik.errors.value && formik.touched.value && (
@@ -80,11 +88,28 @@ const Todo = ({ key, id ,task, completed, removeTodo, toggleTodo, updateTodo}) =
           </form>
         </CSSTransition>
       );
-    } else {
+    } 
+    //Else
+    else {
       result = (
-        <CSSTransition key='normal' timeout={500} classNames='task-text'>
+        <CSSTransition key='normal' timeout={500} classNames='task-text' >
           <li className='Todo-task' onClick={(e) => toggleTodo(id, e)}>
-            {tasks}
+            <b>Task: {tasks} </b> <br />
+            <div>
+              {
+                formik.values.updatedDate 
+                ? <small>Updated At: { format(formik.values.updatedDate , 'MM/dd/yyyy') }</small> 
+                : (<small>Created At: { format(createDate, 'MM/dd/yyyy') }</small> )
+              }
+              <br></br>
+              {
+                formik.values.updatedDate 
+                ? <small>Updated Time: { `${getHours(formik.values.updatedDate)}:${getMinutes(formik.values.updatedDate)}:${getSeconds(formik.values.updatedDate)} ` }</small> 
+                : <small>Created Time: { `${getHours(createDate)}:${getMinutes(createDate)}:${getSeconds(createDate)} ` }</small>
+              }
+            
+            </div>
+
           </li>
         </CSSTransition>
       );
@@ -98,9 +123,11 @@ const Todo = ({ key, id ,task, completed, removeTodo, toggleTodo, updateTodo}) =
           <button onClick={() => toggleForm()}>
             <i className='fas fa-pen' />
           </button>
-          <button onClick={(e) => removeTodo(id)}>
-            <i className='fas fa-trash' />
-          </button>
+          <Popup 
+            iconClass='fa-trash'
+            title="Warning" 
+            content="Are You Sure Want To Delete?" 
+            action={(e) => removeTodo(id)} />
         </div>
       </TransitionGroup>
     );
