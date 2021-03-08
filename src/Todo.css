@@ -94,10 +94,9 @@
   height: 3rem;
 }
 
-
-.text-danger{
-  color:red;
+.text-danger {
+  color: red;
 }
-.error-msg{
-  padding : 3px;
+.error-msg {
+  padding: 3px;
 }

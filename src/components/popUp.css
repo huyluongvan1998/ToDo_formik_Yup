@@ -1,73 +1,71 @@
 .modal {
-    font-size: 12px;
-    width: 400px;
-    height: 300px;
-    background-color: rgba(255, 102, 102, 0.8);
-  }
+  font-size: 12px;
+  width: 400px;
+  height: 300px;
+  background-color: rgba(255, 102, 102, 0.8);
+}
 
 .modal > .header {
-    width: 100%;
-    border-bottom: 1px solid gray;
-    font-size: 18px;
-    text-align: center;
-    padding: 5px;
-  }
+  width: 100%;
+  border-bottom: 1px solid gray;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
+}
 .modal > .content {
-    width: 100%;
-    padding: 10px 5px;
-  }
+  width: 100%;
+  padding: 10px 5px;
+}
 .modal > .actions {
-    width: 100%;
-    padding: 10px 5px;
-    margin: auto;
-    text-align: center;
-  }
+  width: 100%;
+  padding: 10px 5px;
+  margin: auto;
+  text-align: center;
+}
 .modal > .close {
-    cursor: pointer;
-    position: absolute;
-    display: block;
-    padding: 2px 5px;
-    line-height: 20px;
-    right: -10px;
-    top: -10px;
-    font-size: 24px;
-    background: #ffffff;
-    border-radius: 18px;
-    border: 1px solid #cfcece;
-  }
-.popup-overlay{
-    background-color: rgba(0, 0, 0 , 0.5);
+  cursor: pointer;
+  position: absolute;
+  display: block;
+  padding: 2px 5px;
+  line-height: 20px;
+  right: -10px;
+  top: -10px;
+  font-size: 24px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #cfcece;
+}
+.popup-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .btn-default {
-    padding: 10px;
-    box-sizing: border-box;
-    border: none;
-    position: relative;
-    top: 5em;
-    margin-left: 2em;
-    color: white;
-    font-weight: bold;
+  padding: 10px;
+  box-sizing: border-box;
+  border: none;
+  position: relative;
+  top: 5em;
+  margin-left: 2em;
+  color: white;
+  font-weight: bold;
 }
 .btn-warning {
-    background-color: orangered;
-    
+  background-color: orangered;
 }
 
 .btn-primary {
-    background-color: blue;
-   
+  background-color: blue;
 }
-div.header{
+div.header {
   font-size: larger;
   font-weight: bolder;
-  color: whitesmoke
+  color: whitesmoke;
 }
-div.content{
+div.content {
   text-align: center;
   box-sizing: border-box;
   padding-top: 7em !important;
   font-size: larger;
   font-weight: bolder;
-  color: whitesmoke
+  color: whitesmoke;
 }

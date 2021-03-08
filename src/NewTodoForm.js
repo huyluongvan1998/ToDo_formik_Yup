@@ -1,10 +1,11 @@
-import React  from "react";
+import { format } from "date-fns";
+import { useFormik } from "formik";
+import React from "react";
 import uuid from "uuid/v4";
-import "./NewTodoForm.css";
-import { useFormik } from 'formik'
 import * as Yup from "yup";
+import "./NewTodoForm.css";
 
-const NewTodoForm = ({createTodo, todos}) => {
+const NewTodoForm = ({ createTodo, todos }) => {
   // constructor(props) {
   //   super(props);
   //   this.state = { task: "" };
@@ -14,45 +15,47 @@ const NewTodoForm = ({createTodo, todos}) => {
 
   const formik = useFormik({
     initialValues: {
-      value: '',
-      id: '',
+      value: "",
+      id: "",
       completed: false,
       createDate: new Date(),
-      isFinished: false
+      isFinished: false,
     },
     validationSchema: Yup.object({
       value: Yup.string()
         .trim("Task is required!")
         .min(2, "Mininum 2 characters")
         .max(15, "Maximum 15 characters")
-        .test('duplicate', 'Task Have Already Existed', function(value){
+        .test("duplicate", "Task Have Already Existed", function (value) {
           let isDup = true;
           let arr = [];
           todos.forEach((todo) => {
-            if(todo.value === value) {
-              todos.map((el, index) => arr.push(todos.indexOf(value) !== index))
+            if (todo.value === value) {
+              todos.map((el, index) =>
+                arr.push(todos.indexOf(value) !== index)
+              );
             } else {
               isDup = true;
             }
-          })
-            arr.length > 0 ? isDup = false : isDup = true
-            arr = [];
-            return isDup
-          })
-        .required("Task is Required!")
+          });
+          arr.length > 0 ? (isDup = false) : (isDup = true);
+          arr = [];
+          return isDup;
+        })
+        .required("Task is Required!"),
     }),
-    onSubmit: values => {
+    onSubmit: (values) => {
       const uid = uuid();
       values.id = uid;
-      const dateTime = new Date();
+      const dateTime = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+      console.log(dateTime);
       values.createDate = dateTime;
       createTodo(values);
       // console.log(JSON.stringify(values))
       formik.handleReset();
-    }
-  })
+    },
+  });
 
-  
   // const [task, setTask] = useState({
   //   value: '',
   //   id: '',
@@ -60,36 +63,33 @@ const NewTodoForm = ({createTodo, todos}) => {
   // });
 
   // const handleSubmit = (evt) => {
-  //   evt.preventDefault(); 
+  //   evt.preventDefault();
   //   const uid = uuid();
   //   createTodo({...task, id: uid});
   //   setTask({...task, value: '' });
   // }
- 
-    return (
-      <form className='NewTodoForm' onSubmit={formik.handleSubmit}>
-          <label htmlFor='task'>New Todo</label>
-       
-          <input
-            type='text'
-            placeholder='New Todo'
-            id='task'
-            name='value'
-            value={formik.values.value}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          <button type='submit' 
-            
-          >Add Todo</button>
-          {formik.errors.value && formik.touched.value && (
-            <div className='error-msg'>
-              <small className='text-danger'>{formik.errors.value}</small>
-            </div>
-          )}
-        
-      </form>
-    );
-  }
+
+  return (
+    <form className="NewTodoForm" onSubmit={formik.handleSubmit}>
+      <label htmlFor="task">New Todo</label>
+
+      <input
+        type="text"
+        placeholder="New Todo"
+        id="task"
+        name="value"
+        value={formik.values.value}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+      />
+      <button type="submit">Add Todo</button>
+      {formik.errors.value && formik.touched.value && (
+        <div className="error-msg">
+          <small className="text-danger">{formik.errors.value}</small>
+        </div>
+      )}
+    </form>
+  );
+};
 
 export default NewTodoForm;
