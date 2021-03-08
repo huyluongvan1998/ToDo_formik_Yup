@@ -110,7 +110,7 @@ const TodoList = () => {
 
   useEffect(() => {
     if (localStorage) {
-      const data = JSON.parse(localStorage.getItem("todos"));
+      const data = JSON.parse(localStorage.getItem("todos")) || [];
       setTodos(data);
     }
   }, []);
