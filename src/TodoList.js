@@ -39,7 +39,7 @@ const TodoList = () =>{
     
     
       localStorage.setItem('todos', JSON.stringify({todos}));
-      console.log('test storage: ', localStorage.todos.map(todo => console.log('test: ',todo)));
+      // console.log('test storage: ', localStorage.todos.map(todo => console.log('test: ',todo)));
     }
   
   const remove = (id)  => {
