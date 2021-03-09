@@ -4,7 +4,14 @@ import SelectOption from "./components/selectOption";
 import NewTodoForm from "./NewTodoForm";
 import Todo from "./Todo";
 import "./TodoList.css";
+import $ from "jquery";
 // import { useFormik } from "formik";
+
+
+const alphabet = 'A B C D E F G H I K L M N O P Q R S T V X Y Z '
+const alphabet_arr = alphabet.toLowerCase().split(' ');
+
+
 
 const TodoList = () => {
   // constructor(props) {
@@ -20,8 +27,9 @@ const TodoList = () => {
 
   const [todos, setTodos] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [selectValue, setSelectValue] = useState();
   // eslint-disable-next-line
+  const [selectValue, setSelectValue] = useState();
+  
 
   const options = [
     { id: 1, status: "default" },
@@ -34,15 +42,18 @@ const TodoList = () => {
     setTodos([...todos, newTodo]);
     const array = [...todos];
     array.push(newTodo);
-
+    setFilteredData([...array])
     localStorage.setItem("todos", JSON.stringify(array));
   };
 
   // Remove Todos
   const remove = (id) => {
-    const removeTodo = todos.filter((el) => el.id !== id);
-    setTodos(todos.filter((el) => el.id !== id));
-    localStorage.setItem("todos", JSON.stringify(removeTodo));
+    const removeArr =  todos.filter((el) => el.id !== id);
+    setTodos([...removeArr]);
+    setFilteredData([...removeArr]);
+    
+
+    localStorage.setItem("todos", JSON.stringify(removeArr));
   };
 
   //Update Todos
@@ -59,7 +70,7 @@ const TodoList = () => {
 
   //Check if Task is Complete
   const toggleCompletion = (id) => {
-    const updatedTodos = todos.map((todo) => {
+    const updatedTodos = (filteredData.length > 0 ? filteredData : todos).map((todo) => {
       if (todo.id === id) {
         return {
           ...todo,
@@ -69,40 +80,52 @@ const TodoList = () => {
       }
       return todo;
     });
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
     setTodos(updatedTodos);
     setFilteredData(updatedTodos);
   };
   // CRUD TODO___________________________________________________________
 
   //Filtered Data
-  const onChangeSearchHandler = (e) => {
-    let { value } = e.target;
+  
 
-    const newData = todos.filter((todo) =>
-      todo.value.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredData(newData);
-  };
-  //FilteredData
+  const onChangeFilter = (e, ltr) => {
+    e.preventDefault();
+  
+    const searchText = $('#searchText').val();
+    const searchSelect = $('#selectSearch option:selected').val();
+    const searchAlphabet= ltr
+    
+    let temp_array = [...todos]; // array use for filter
+    // console.log('text: ', searchText, 'select: ', searchSelect);
+    //check to search by name
+    if( searchText) {
+      temp_array = temp_array.filter(todo => todo.value.toLowerCase().includes(searchText.toLowerCase()) );
+    }
+    //check to search by dropdown
+    if(searchSelect) {
+      temp_array = searchSelect === 'process' 
+      ? temp_array.filter(todo => todo.isFinished === false) 
+      : searchSelect === 'finish'
+        ? temp_array.filter(todo => todo.isFinished === true) 
+        : temp_array
+    } // check to search by select
+    if(searchAlphabet) {
+      temp_array = temp_array.filter(todo => todo.value.toLowerCase().startsWith(searchAlphabet))
+      if(temp_array.length === 0) {
 
-  //Select Search
-  const onChangeSelectSearch = (e) => {
-    const { value } = e.target;
-    setSelectValue(value);
-
-    let newSelectData = [];
-    if (!value) {
-      return;
-    } else if (value === "finish") {
-      newSelectData = todos.filter((todo) => todo.isFinished === true);
-    } else if (value === "process") {
-      newSelectData = todos.filter((todo) => todo.isFinished === false);
-    } else {
-      newSelectData = todos;
+        return temp_array;
+      }
     }
 
-    setFilteredData(newSelectData);
-  };
+    
+    setFilteredData([...temp_array]);
+
+    console.log('afterset ', temp_array)
+  }
+
+
+
 
   //Select Search
 
@@ -165,16 +188,33 @@ const TodoList = () => {
         <input
           key="searchText"
           name="searchText"
+          id="searchText"
           className="search-input"
           type="text"
           placeholder="Search by Todo Name"
-          onChange={(e) => onChangeSearchHandler(e)}
+          onChange={(e) => onChangeFilter(e)}
         />
         <SelectOption
           options={options}
-          handleChange={(e) => onChangeSelectSearch(e)}
+          id="selectSearch"
+          handleChange={(e) => onChangeFilter(e)}
           value={selectValue}
         />
+        <span>Search: 
+          {
+              alphabet_arr.map((ltr, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => onChangeFilter(e, ltr)}
+                  value={ltr}
+                  id="alphabet-btn"
+                  className='alphabet-btn'
+                > 
+                  {ltr.toLocaleUpperCase()}
+                </button>
+              ))
+          }
+        </span>
       </form>
       <NewTodoForm createTodo={create} todos={todos} />
 
