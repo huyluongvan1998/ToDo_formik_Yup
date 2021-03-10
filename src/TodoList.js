@@ -20,7 +20,7 @@ const TodoList = () => {
   const [selectValue, setSelectValue] = useState();
   
   const sortAlphabet = (arr) => {
-    const filteredArr = arr.sort((a, b) => a.value.localeCompare(b.value));
+    arr.sort((a, b) => a.value.localeCompare(b.value));
     return setFilteredData(arr);
   }
 
