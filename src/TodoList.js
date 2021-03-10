@@ -8,8 +8,6 @@ import $ from "jquery";
 // import { useFormik } from "formik";
 
 
-const alphabet = 'A B C D E F G H I K L M N O P Q R S T V X Y Z '
-const alphabet_arr = alphabet.toLowerCase().split(' ');
 
 
 
@@ -21,6 +19,10 @@ const TodoList = () => {
   // eslint-disable-next-line
   const [selectValue, setSelectValue] = useState();
   
+  const sortAlphabet = (arr) => {
+    const filteredArr = arr.sort((a, b) => a.value.localeCompare(b.value));
+    return setFilteredData(arr);
+  }
 
   const options = [
     { id: 1, status: "default" },
@@ -33,8 +35,7 @@ const TodoList = () => {
     setTodos([...todos, newTodo]);
     const array = [...todos];
     array.push(newTodo);
-    console.log('array', array);
-    setFilteredData([...array])
+    sortAlphabet(array);
     localStorage.setItem("todos", JSON.stringify(array));
   };
 
@@ -42,8 +43,8 @@ const TodoList = () => {
   const remove = (id) => {
     const removeArr =  todos.filter((el) => el.id !== id);
     setTodos([...removeArr]);
-    setFilteredData([...removeArr]);
-    
+    sortAlphabet(removeArr);
+
 
     localStorage.setItem("todos", JSON.stringify(removeArr));
   };
@@ -57,6 +58,7 @@ const TodoList = () => {
       return todo;
     });
     setTodos(updatedTodos);
+    sortAlphabet(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
   };
 
@@ -81,18 +83,18 @@ const TodoList = () => {
   //Filtered Data
   
 
-  const onChangeFilter = (e, ltr) => {
+  const onChangeFilter = (e) => {
     e.preventDefault();
   
     const searchText = $('#searchText').val();
     const searchSelect = $('#selectSearch option:selected').val();
-    const searchAlphabet= ltr
     
     let temp_array = [...todos]; // array use for filter
     // console.log('text: ', searchText, 'select: ', searchSelect);
     //check to search by name
     if( searchText) {
       temp_array = temp_array.filter(todo => todo.value.toLowerCase().includes(searchText.toLowerCase()) );
+     
     }
     //check to search by dropdown
     if(searchSelect) {
@@ -102,22 +104,14 @@ const TodoList = () => {
         ? temp_array.filter(todo => todo.isFinished === true) 
         : temp_array
     } // check to search by select
-    if(searchAlphabet) {
-      temp_array = temp_array.filter(todo => todo.value.toLowerCase().startsWith(searchAlphabet))
-      if(temp_array.length === 0) {
-
-        return temp_array;
-      }
-    }
-
-    
+   
     setFilteredData([...temp_array]);
 
-    console.log('afterset ', temp_array)
+    
   }
 
 
-
+  
 
   //Select Search
 
@@ -126,16 +120,19 @@ const TodoList = () => {
   useEffect(() => {
     if (localStorage) {
       const data = JSON.parse(localStorage.getItem("todos")) || [];
+      data.sort((a, b) => a.value.localeCompare(b.value));
       setTodos(data);
-    }
-  }, []);
+      setFilteredData(data);
+    } 
+  },[]);
+
+  
 
   //**********************************LOCAL STORAGE**********************************
 
   //SHOW TODOS LIST
 
-  const showTodos = !(filteredData.length > 0)
-    ? todos.map((todo) => {
+  const showTodos = filteredData.map(todo => {
         const { id, value, completed, createDate, updatedDate } = todo;
         return (
           <CSSTransition key={todo.id} timeout={500} classNames="todo">
@@ -154,24 +151,6 @@ const TodoList = () => {
           </CSSTransition>
         );
       })
-    : filteredData.map((todo) => {
-        const { id, value, completed, createDate } = todo;
-        return (
-          <CSSTransition key={todo.id} timeout={500} classNames="todo">
-            <Todo
-              key={id}
-              id={id}
-              task={value}
-              completed={completed}
-              createDate={createDate}
-              removeTodo={remove}
-              updateTodo={update}
-              toggleTodo={toggleCompletion}
-              todos={todos}
-            />
-          </CSSTransition>
-        );
-      });
   return (
     <div className="TodoList">
       <h1>
@@ -193,21 +172,7 @@ const TodoList = () => {
           handleChange={(e) => onChangeFilter(e)}
           value={selectValue}
         />
-        <span>Search: 
-          {
-              alphabet_arr.map((ltr, idx) => (
-                <button
-                  key={idx}
-                  onClick={(e) => onChangeFilter(e, ltr)}
-                  value={ltr}
-                  id="alphabet-btn"
-                  className='alphabet-btn'
-                > 
-                  {ltr.toLocaleUpperCase()}
-                </button>
-              ))
-          }
-        </span>
+      
       </form>
       <NewTodoForm createTodo={create} todos={todos} />
 
