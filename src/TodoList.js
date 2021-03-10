@@ -14,16 +14,7 @@ const alphabet_arr = alphabet.toLowerCase().split(' ');
 
 
 const TodoList = () => {
-  // constructor(props) {
-  // //   super(props);
-  // //   this.state = {
-  // //     todos: []
-  // //   };
-  // //   this.create = this.create.bind(this);
-  // //   this.remove = this.remove.bind(this);
-  // //   this.update = this.update.bind(this);
-  // //   this.toggleCompletion = this.toggleCompletion.bind(this);
-  // // }
+  
 
   const [todos, setTodos] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -42,6 +33,7 @@ const TodoList = () => {
     setTodos([...todos, newTodo]);
     const array = [...todos];
     array.push(newTodo);
+    console.log('array', array);
     setFilteredData([...array])
     localStorage.setItem("todos", JSON.stringify(array));
   };
@@ -57,10 +49,10 @@ const TodoList = () => {
   };
 
   //Update Todos
-  const update = (id, updatedTask) => {
+  const update = (id, updatedTask, updatedDate) => {
     const updatedTodos = todos.map((todo) => {
       if (todo.id === id) {
-        return { ...todo, value: updatedTask, completed: false };
+        return { ...todo, value: updatedTask, completed: false, updatedDate: updatedDate };
       }
       return todo;
     });
@@ -144,7 +136,7 @@ const TodoList = () => {
 
   const showTodos = !(filteredData.length > 0)
     ? todos.map((todo) => {
-        const { id, value, completed, createDate } = todo;
+        const { id, value, completed, createDate, updatedDate } = todo;
         return (
           <CSSTransition key={todo.id} timeout={500} classNames="todo">
             <Todo
@@ -153,6 +145,7 @@ const TodoList = () => {
               task={value}
               completed={completed}
               createDate={createDate}
+              updatedDate={updatedDate ? updatedDate : ''}
               removeTodo={remove}
               updateTodo={update}
               toggleTodo={toggleCompletion}

@@ -1,6 +1,7 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { format } from "date-fns";
-import { useFormik } from "formik";
 import React, { useState } from "react";
+import { useForm } from 'react-hook-form';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import * as Yup from "yup";
 import Popup from "./components/popUp";
@@ -16,97 +17,79 @@ const Todo = ({
   toggleTodo,
   updateTodo,
   todos,
+  updatedDate
 }) => {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     isEditing: false,
-  //     task: this.props.task
-  //   };
+  
 
-  //   this.handleRemove = this.handleRemove.bind(this);
-  //   this.toggleForm = this.toggleForm.bind(this);
-  //   this.handleChange = this.handleChange.bind(this);
-  //   this.handleUpdate = this.handleUpdate.bind(this);
-  //   this.handleToggle = this.handleToggle.bind(this);
-  // }
-  const formik = useFormik({
-    initialValues: {
-      value: task,
-      updatedDate: "",
-      isUpdated: false,
-    },
-    validationSchema: Yup.object({
-      value: Yup.string()
-        .trim("Task is required!")
-        .min(2, "Mininum 2 characters")
-        .max(15, "Maximum 15 characters")
-        .test("duplicate", "Task Have Already Existed", function (value) {
-          let isDup = true;
-          let arr = [];
-          todos.forEach((todo) => {
-            if (todo.value === value) {
-              todos.map((el, index) =>
-                arr.push(todos.indexOf(value) !== index)
-              );
-            } else {
-              isDup = true;
-            }
-          });
-          arr.length > 0 ? (isDup = false) : (isDup = true);
-          arr = [];
-          return isDup;
-        })
-        .required("Task is Required!"),
-    }),
-    onSubmit: (values) => {
-      setTasks(values.value);
-      setIsEditing(false);
-      const generateUpdatedDate = format(new Date(), "yyyy-MM-dd HH:mm:ss");
-      values.updatedDate = generateUpdatedDate;
-      updateTodo(id, values.value);
-    },
-  });
+
+
+  const validationSchema = Yup.object({
+    value: Yup.string()
+      .trim("Task is required!")
+      .min(2, "Mininum 2 characters")
+      .max(15, "Maximum 15 characters")
+      .test("duplicate", "Task Have Already Existed", function (value) {
+        let isDup = true;
+        let arr = [];
+        todos.forEach((todo) => {
+          if (todo.value === value) {
+            todos.map((el, index) =>
+              arr.push(todos.indexOf(value) !== index)
+            );
+          } else {
+            isDup = true;
+          }
+        });
+        arr.length > 0 ? (isDup = false) : (isDup = true);
+        arr = [];
+        return isDup;
+      })
+      .required("Task is Required!"),
+  })
+
+ 
 
   const [isEditing, setIsEditing] = useState(false);
   const [tasks, setTasks] = useState(task);
-  // const handleRemove = () => {
-  //   this.props.removeTodo(this.props.id);
-  // }
+  
+  
+
   const toggleForm = () => {
     setIsEditing((prev) => (prev = !prev));
   };
-  // const handleUpdate = (evt, id) => {
-  //   evt.preventDefault();
-  //   //take new task data and pass up to parent
-  //   updateTodo(id, tasks);
-  //   setIsEditing( false );
-  // }
-  // const handleChange = (evt) => {
 
-  //   setTasks( evt.target.value);
+  const onSubmit = (values) => {
+    const generateUpdatedDate = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+    values.updatedDate = generateUpdatedDate;
+    setTasks(values.value);
+    setIsEditing(false);
+    updateTodo(id, values.value, values.updatedDate);
+  };
 
-  // }
-  // handleToggle(evt) {
-  //   this.props.toggleTodo(this.props.id);
-  // }
-  const { value } = formik.values;
+
+  const {register , handleSubmit, errors} = useForm({
+    defaultValues: {
+      value: task.value,
+      id: "",
+      completed: false,
+      updatedDate: new Date(),
+      isFinished: false,
+    },
+   resolver: yupResolver(validationSchema)
+  });
+  
   let result;
   if (isEditing) {
     result = (
       <CSSTransition key="editing" timeout={500} classNames="form">
-        <form className="Todo-edit-form" onSubmit={formik.handleSubmit}>
+        <form className="Todo-edit-form" onSubmit={ handleSubmit(onSubmit) }>
           <input
             type="text"
-            value={value}
             name="value"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
+            ref={ register }
           />
-          <button type="submit">Save</button>
-          {formik.errors.value && formik.touched.value && (
-            <small className="text-danger">{formik.errors.value}</small>
-          )}
+        <button type="submit">Save</button>
+        <small className="text-danger">{errors.value?.message}</small>
         </form>
       </CSSTransition>
     );
@@ -118,10 +101,11 @@ const Todo = ({
         <li className="Todo-task" onClick={(e) => toggleTodo(id, e)}>
           <b>Task: {tasks} </b> <br />
           <div>
-            {formik.values.updatedDate ? (
-              <small>Updated At: {formik.values.updatedDate} </small>
+            {updatedDate ? (
+              <small>Updated At: {updatedDate} </small>
             ) : (
-              <small>Created At: {createDate} </small>
+              <small>Created At: {createDate}  </small>
+              
             )}
             <br></br>
           </div>
